@@ -4,8 +4,12 @@ var User = require('../models/user');
 var bcrypt = require('bcrypt');
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
-    res.render('login');
+router.get('/', function (req, res, next) {    
+    if (req.session.user) {
+        res.redirect('/home/' + req.session.user[0].username);
+    } else {
+        res.render('login');
+    }
 });
 
 router.post('/submit', (req, res) => {
@@ -31,7 +35,7 @@ router.post('/submit', (req, res) => {
                         } else {
                             if (isMatch) {
                                 req.session.user = user;
-                                res.redirect('/home');
+                                res.redirect('/home/' + req.session.user[0].username);
                             } else {
                                 res.render('login', {
                                     message: "Password is invalid!"
@@ -48,8 +52,10 @@ router.post('/submit', (req, res) => {
                 error: err
             });
         });
-    }else{
-        res.render('login', { message: "Enter valid credentials"});
+    } else {
+        res.render('login', {
+            message: "Enter valid credentials"
+        });
     }
 });
 

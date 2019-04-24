@@ -2,11 +2,6 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a:hover {
-  color: #fff !important;
-  text-decoration: none !important;
-}
-
 label {
   color: #fff;
 }
@@ -242,11 +237,12 @@ label {
   box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
 }
 
-.users{
+.users {
   border-radius: 15px;
   background: #eee;
   margin: 15px;
   color: black;
+  cursor: pointer;
 }
 
 .avatar {
@@ -280,10 +276,20 @@ label {
   background: #d73814;
 }
 
-.message-bar{
+.message-bar {
+  margin-left: -24px !important;
   width: 90%;
   background: #343A40;
   bottom: 0;
   position: fixed;
   padding: 20px;
+}
+
+.message-bar input{
+  border-radius: 14px;
+}
+
+#style-1::-webkit-scrollbar {
+  width: 12px;
+  background-color: #F5F5F5;
 }

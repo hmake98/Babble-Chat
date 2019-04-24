@@ -7,7 +7,12 @@ var expressSession = require('express-session');
 var mongoose = require('mongoose');
 var MongoStore = require('connect-mongo')(expressSession);
 var flash = require('req-flash');
+var User = require('./models/user');
+var http = require('http');
+var app = express();
+var server = http.createServer(app);
 
+var io = require('socket.io').listen(server);
 
 var indexRouter = require('./routes/index');
 var loginRouter = require('./routes/login');
@@ -15,9 +20,9 @@ var homeRouter = require('./routes/home');
 var forgotPass = require('./routes/forgot');
 var resetPass = require('./routes/reset');
 
-var app = express();
-
-mongoose.connect('mongodb://localhost:27017/forgotpass', { useNewUrlParser: true });
+mongoose.connect('mongodb://localhost:27017/forgotpass', {
+  useNewUrlParser: true
+});
 mongoose.Promise = global.Promise;
 
 app.use(expressSession({
@@ -47,6 +52,16 @@ app.use('/home', homeRouter);
 app.use('/forgot', forgotPass);
 app.use('/reset', resetPass);
 
+app.get('/home/:username', (req, res) => {
+  io.on('connection', (socket) => {
+    console.log(req.params.username+" connected!");
+  
+    socket.on('disconnect', function(){
+      console.log('user disconnected');
+    });
+  });
+});
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
@@ -62,5 +77,7 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+server.listen(3001);
 
 module.exports = app;

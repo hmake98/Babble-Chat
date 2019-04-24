@@ -5,7 +5,11 @@ var bcrypt = require('bcrypt');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  res.render('index');
+  if (req.session.user) {
+    res.redirect('/home/' + req.session.user[0].username);
+  } else {
+    res.render('index');
+  }
 });
 
 router.post('/signup', (req, res) => {
