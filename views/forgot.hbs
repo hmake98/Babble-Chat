@@ -1,0 +1,24 @@
+<div class="container login-container">
+    <div class="row">
+        {{#if message}}
+        <div class="container">
+            <div class="notice notice-success" id="notify">
+                <strong> Message: </strong> {{message}}
+            </div>
+        </div>
+        {{/if}}
+        <div class="col-md-4 col-s-4 col-xs-4"></div>
+        <div class="col-md-4 col-s-4 col-xs-4 login-form-1">
+            <h3> Email verification </h3>
+            <hr>
+            <form action="/forgot/submit" method="POST">
+                <div class="form-group">
+                    <input id="uemail" name="email" type="text" class="form-control" placeholder="Enter your email here!" value="" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btnSubmit w-100" value="Submit" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,289 @@
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a:hover {
+  color: #fff !important;
+  text-decoration: none !important;
+}
+
+label {
+  color: #fff;
+}
+
+.login-container {
+  margin-top: 5%;
+  margin-bottom: 5%;
+}
+
+.login-form-1 {
+  padding: 5%;
+  box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 9px 26px 0 rgba(0, 0, 0, 0.19);
+}
+
+.login-form-1 h3 {
+  text-align: center;
+  color: #333;
+}
+
+.login-form-2 {
+  padding: 5%;
+  background: #0062cc;
+  box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 9px 26px 0 rgba(0, 0, 0, 0.19);
+}
+
+.login-form-2 h3 {
+  text-align: center;
+  color: #fff;
+}
+
+.login-container form {
+  padding: 10%;
+}
+
+.btnSubmit {
+  width: 50%;
+  border-radius: 1rem;
+  padding: 1.5%;
+  border: none;
+  cursor: pointer;
+}
+
+.login-form-1 .btnSubmit {
+  font-weight: 600;
+  color: #fff;
+  background-color: #0062cc;
+}
+
+.login-form-1 {
+  border-radius: 15px;
+}
+
+.login-form-1 input {
+  border-radius: 15px;
+}
+
+.login-form-2 {
+  border-radius: 15px;
+}
+
+.login-form-2 input {
+  border-radius: 15px;
+}
+
+.login-form-2 .btnSubmit {
+  font-weight: 600;
+  color: #0062cc;
+  background-color: #fff;
+}
+
+.login-form-2 .ForgetPwd {
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-form-1 .ForgetPwd {
+  color: #0062cc;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.notice {
+  animation: shake 1s;
+  padding: 15px;
+  background-color: #fafafa;
+  border-left: 6px solid #7f7f84;
+  margin-bottom: 30px;
+  -webkit-box-shadow: 0 5px 8px -6px rgba(0, 0, 0, .2);
+  -moz-box-shadow: 0 5px 8px -6px rgba(0, 0, 0, .2);
+  box-shadow: 0 5px 8px -6px rgba(0, 0, 0, .2);
+}
+
+.notice-sm {
+  padding: 10px;
+  font-size: 80%;
+}
+
+.notice-lg {
+  padding: 35px;
+  font-size: large;
+}
+
+.notice-success {
+  border-color: #80D651;
+}
+
+.notice-success>strong {
+  color: #80D651;
+}
+
+.notice-info {
+  border-color: #45ABCD;
+}
+
+.notice-info>strong {
+  color: #45ABCD;
+}
+
+.notice-warning {
+  border-color: #FEAF20;
+}
+
+.notice-warning>strong {
+  color: #FEAF20;
+}
+
+.notice-danger {
+  border-color: #d73814;
+}
+
+.notice-danger>strong {
+  color: #d73814;
+}
+
+.feather {
+  width: 16px;
+  height: 16px;
+  vertical-align: text-bottom;
+}
+
+/*
+ * Sidebar
+ */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  /* Behind the navbar */
+  padding: 48px 0 0;
+  /* Height of navbar */
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+.sidebar-sticky {
+  position: relative;
+  top: 0;
+  height: calc(100vh - 48px);
+  padding-top: .5rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* Scrollable contents if viewport is shorter than content. */
+}
+
+@supports ((position: -webkit-sticky) or (position: sticky)) {
+  .sidebar-sticky {
+    position: -webkit-sticky;
+    position: sticky;
+  }
+}
+
+.sidebar .nav-link {
+  font-weight: 500;
+  color: #333;
+}
+
+.sidebar .nav-link .feather {
+  margin-right: 4px;
+  color: #999;
+}
+
+.sidebar .nav-link.active {
+  color: #007bff;
+}
+
+.sidebar .nav-link:hover .feather,
+.sidebar .nav-link.active .feather {
+  color: inherit;
+}
+
+.sidebar-heading {
+  font-size: .75rem;
+  text-transform: uppercase;
+}
+
+/*
+ * Content
+ */
+
+[role="main"] {
+  padding-top: 48px;
+  /* Space for fixed navbar */
+}
+
+/*
+ * Navbar
+ */
+
+.navbar-brand {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  font-size: 1rem;
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+}
+
+.navbar .form-control {
+  padding: .75rem 1rem;
+  border-width: 0;
+  border-radius: 0;
+}
+
+.form-control-dark {
+  color: #fff;
+  background-color: rgba(255, 255, 255, .1);
+  border-color: rgba(255, 255, 255, .1);
+}
+
+.form-control-dark:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+}
+
+.users{
+  border-radius: 15px;
+  background: #eee;
+  margin: 15px;
+  color: black;
+}
+
+.avatar {
+  position: relative;
+  margin: 15px;
+  vertical-align: middle;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.online-dot {
+  position: absolute;
+  margin-left: -29px;
+  margin-top: 53px;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  background: #80D651
+}
+
+.offline-dot {
+  position: absolute;
+  margin-left: -29px;
+  margin-top: 53px;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  background: #d73814;
+}
+
+.message-bar{
+  width: 90%;
+  background: #343A40;
+  bottom: 0;
+  position: fixed;
+  padding: 20px;
+}

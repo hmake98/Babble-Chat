@@ -1,0 +1,28 @@
+<div class="container login-container">
+    <div class="row">
+        {{#if message}}
+        <div class="container">
+            <div class="notice notice-sucess" id="notify">
+                <strong> Message: </strong> {{message}}
+            </div>
+        </div>
+        {{/if}}
+        <div class="col-md-4 col-s-4 col-xs-4"></div>
+        <div class="col-md-4 col-s-4 col-xs-4 login-form-1">
+            <h3> Password Reset </h3>
+            <hr>
+            <form action="/reset/submit" method="POST">
+                <div class="form-group">
+                    <input id="upass" name="password" type="password" class="form-control" placeholder="Password" value="" />
+                </div>
+                <div class="form-group">
+                    <input id="ucpass" name="cfrmpas" type="password" class="form-control" placeholder="Confirm password" value="" />
+                </div>
+                <input type="hidden" value="{{token}}" name="token">
+                <div class="form-group">
+                    <input type="submit" class="btnSubmit w-100" value="Submit" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
