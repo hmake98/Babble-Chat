@@ -13,10 +13,11 @@ router.get('/', function (req, res, next) {
 
 router.get('/logout', (req, res) => {
   req.session.destroy();
-  return res.redirect('/login');
+  res.redirect('/login');
 });
 
 router.get('/:username', (req, res) => {
+  // var io = req.app.get('socketio');
   User.find({
     username: {
       $ne: req.params.username

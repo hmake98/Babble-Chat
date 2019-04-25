@@ -213,14 +213,8 @@ label {
  * Navbar
  */
 
-.navbar-brand {
-  padding-top: .75rem;
-  padding-bottom: .75rem;
-  font-size: 1rem;
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
-}
-
 .navbar .form-control {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
   padding: .75rem 1rem;
   border-width: 0;
   border-radius: 0;
@@ -286,7 +280,7 @@ label {
 }
 
 .message-bar input{
-  border-radius: 14px;
+  border-radius: 20px;
 }
 
 #style-1::-webkit-scrollbar {

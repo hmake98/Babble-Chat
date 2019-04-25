@@ -4,7 +4,7 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-    <a class="navbar-brand" href=""> Babble </a>
+    <a href="" class="navbar-brand"> Babble </a>
     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
       <li class="nav-item">
         <a class="nav-link" href="">Chat</a>
@@ -24,11 +24,14 @@
     <nav class="col-md-2 d-none d-md-block bg-light sidebar">
       <div class="sidebar-sticky" id="style-1">
         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <input type="input" id="userid" value="{{user._id}}" hidden>
         <ul class="nav flex-column">
           {{#users}}
           <li class="nav-item users">
             <img src="http://www.drreddyforlife.com/wp-content/uploads/2018/05/user-placeholder-1.jpg" alt="Avatar"
-              class="avatar"> <span class="online-dot"></span> {{this.username}}
+              class="avatar">
+            <span class="offline-dot" id="{{this._id}}"></span>
+            {{this.username}}
           </li>
           {{/users}}
         </ul>
@@ -36,17 +39,44 @@
     </nav>
 
     <main role="main" class="col-md-10 ml-sm-auto col-lg-10 px-4">
+      <div class="chat">
+        <p id="output"> </p>
+      </div>
       <div class="row message-bar">
         <div class="col-md-10">
-          <input class="form-control" placeholder="Enter message">
+          <input class="form-control" placeholder="Enter message" id="message">
         </div>
         <div class="col-md-2">
-          <button class="btn btn-primary"> Send </button>
+          <button class="btn btn-primary" id="send"> Send </button>
         </div>
       </div>
     </main>
   </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.4.0.min.js"
+  integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
 <script src="/socket.io/socket.io.js"></script>
-<script src="/javascripts/chat.js"></script>
+<script>
+  var socket = io();
+
+  socket.on('connect', function () {
+    console.log('Connected to server');
+    var userid = document.getElementById('userid').value;
+    socket.emit('login', {
+      userid: userid
+    });
+    socket.on('publish', (data) => {
+      console.log(data);
+      if (data.online) {
+        let user = document.getElementById(data.id);
+        user.classList.remove('offline-dot');
+        user.classList.add('online-dot');
+      } else {
+        let user = document.getElementById(data.id);
+        user.classList.remove('online-dot');
+        user.classList.add('offline-dot');
+      }
+    });
+  });
+</script>

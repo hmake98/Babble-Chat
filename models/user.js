@@ -19,6 +19,10 @@ const userSchema = new Schema({
     },
     resetExpire:{
         type: String
+    },
+    online:{
+        type: Boolean,
+        default: 0
     }
 });
 

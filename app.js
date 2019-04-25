@@ -36,6 +36,7 @@ app.use(expressSession({
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+app.set('socketio', io);
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -52,13 +53,23 @@ app.use('/home', homeRouter);
 app.use('/forgot', forgotPass);
 app.use('/reset', resetPass);
 
-app.get('/home/:username', (req, res) => {
-  io.on('connection', (socket) => {
-    console.log(req.params.username+" connected!");
-  
-    socket.on('disconnect', function(){
-      console.log('user disconnected');
+var users = {}
+io.on('connection', (socket) => {
+  console.log("User connected!");
+  socket.on('login', (data) => {
+    console.log('A user ' + data.userid + ' connected!');
+    users[socket.id] = data.userid;
+    socket.broadcast.emit('publish', {
+      online: true,
+      id: data.userid
     });
+  });
+  socket.on('disconnect', () => {
+    console.log('User ' + users[socket.id] + ' disconnected');
+    socket.broadcast.emit('publish', {
+      online: false,
+      id: users[socket.id]
+    })
   });
 });
 
