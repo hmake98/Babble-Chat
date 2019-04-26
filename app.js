@@ -23,6 +23,7 @@ var resetPass = require('./routes/reset');
 mongoose.connect('mongodb://localhost:27017/forgotpass', {
   useNewUrlParser: true
 });
+
 mongoose.Promise = global.Promise;
 
 app.use(expressSession({
@@ -33,6 +34,7 @@ app.use(expressSession({
   resave: false,
   saveUninitialized: false
 }));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -53,25 +55,34 @@ app.use('/home', homeRouter);
 app.use('/forgot', forgotPass);
 app.use('/reset', resetPass);
 
-var users = {}
+//var usersArr = [];
+var users= {};
+
 io.on('connection', (socket) => {
-  console.log("User connected!");
   socket.on('login', (data) => {
-    console.log('A user ' + data.userid + ' connected!');
-    users[socket.id] = data.userid;
-    socket.broadcast.emit('publish', {
-      online: true,
-      id: data.userid
+    User.findOne({
+      _id: data.userid
+    }).then(user => {
+      console.log(user.username + ' connected!');
+      users[data.userid] = true;
+      socket.broadcast.emit('publish', {
+        usersStatus: users
+      });
+      socket.on('joinroom', (data) => {
+        socket.join(data);
+      });  
     });
-  });
-  socket.on('disconnect', () => {
-    console.log('User ' + users[socket.id] + ' disconnected');
-    socket.broadcast.emit('publish', {
-      online: false,
-      id: users[socket.id]
+    socket.on('disconnect', () => {
+      console.log('A user disconnected!');
+      users[data.userid] = false;
+      socket.broadcast.emit('publish', {
+        usersStatus: users
+      })
     })
   });
 });
+
+app.set('users', users);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

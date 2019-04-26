@@ -17,7 +17,8 @@ router.get('/logout', (req, res) => {
 });
 
 router.get('/:username', (req, res) => {
-  // var io = req.app.get('socketio');
+  var onlineusers = req.app.get('users');
+  //var io = req.app.get('socketio');
   User.find({
     username: {
       $ne: req.params.username
@@ -25,10 +26,11 @@ router.get('/:username', (req, res) => {
   }).then(users => {
     User.findOne({
       username: req.params.username
-    }).then(user => {
+    }).then(user => {    
       res.render('home', {
         users: users,
-        user: user
+        user: user,
+        onlineusers: onlineusers
       });
     })
   });
