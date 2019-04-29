@@ -23,8 +23,8 @@
   <div class="row">
     <nav class="col-md-2 d-none d-md-block bg-light sidebar">
       <div class="sidebar-sticky" id="style-1">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        {{user._id}}
+        <input class="form-control mr-sm-2" id="search" type="search" placeholder="Search" aria-label="Search"
+          onkeydown="searchUser()">
         <input type="input" id="userid" value="{{user._id}}" hidden>
         <input type="input" id="username" value="{{user.username}}" hidden>
         <ul class="nav flex-column">
@@ -42,7 +42,17 @@
 
     <main role="main" class="col-md-10 ml-sm-auto col-lg-10 px-4">
       <div class="chat">
-        <p id="output"> </p>
+        <div class="container-fluid">
+          <div class="messaging">
+            <div class="inbox_msg">
+              <div class="mesgs">
+                <div class="msg_history" id="output">
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="row message-bar">
         <div class="col-md-10">
@@ -62,17 +72,27 @@
 <script>
   var socket = io();
 
+  function searchUser() {
+    var usersIn = [];
+    let search = document.getElementById('search').value;
+    var users = document.getElementsByClassName('users');
+    for (let user of users) {
+      if (user.textContent.trim().toLowerCase().includes(search.toLowerCase())) {
+        console.log(user.textContent.trim());
+        usersIn.push(user.textContent.trim());
+      } else {
+        console.log('No user found!');
+      }
+    }
+  }
   socket.on('connect', function () {
     console.log('Connected to server');
-    socket.emit('joinroom', 'general');
     var userid = document.getElementById('userid').value;
     socket.emit('login', {
       userid: userid
     });
     socket.on('publish', (data) => {
-      console.log(data);  
       for (let key in data.usersStatus) {
-        console.log(key);
         if (data.usersStatus[key]) {
           if (key !== userid) {
             let user = document.getElementById(key);
@@ -83,11 +103,49 @@
         } else {
           let user = document.getElementById(key);
           user.classList.remove('online-dot');
-          user.classList.add('offline-dot');  
+          user.classList.add('offline-dot');
           console.log(user)
         }
       }
     });
+    socket.emit('joinroom', {
+      room: 'general'
+    });
+    var send = document.getElementById('send');
+    send.addEventListener('click', () => {
+      var message = document.getElementById('message').value;
+      if (message !== '') {
+        socket.emit('chat', {
+          room: 'general',
+          userid: userid,
+          message: message
+        });
+        document.getElementById('message').value = '';
+      }
+    })
+    socket.on('message', (data) => {
+      if (data.userid == userid) {
+        document.getElementById('output').innerHTML += `
+        <div class="outgoing_msg">
+          <div class="sent_msg">
+            <p>${data.message}</p>
+            <span class="time_date"> ${data.time} </span>
+          </div>
+        </div>
+      `;
+      } else {
+        document.getElementById('output').innerHTML += `
+        <div class="incoming_msg">
+          <div class="received_msg">
+            <div class="received_withd_msg">
+              <strong>${data.username}</strong>
+              <p>${data.message}</p>
+              <span class="time_date"> ${data.time} </span>
+            </div>
+          </div>
+        </div>
+      `;
+      }
+    });
   });
- 
 </script>

@@ -8,6 +8,8 @@ var mongoose = require('mongoose');
 var MongoStore = require('connect-mongo')(expressSession);
 var flash = require('req-flash');
 var User = require('./models/user');
+var Chat = require('./models/chat');
+var Room = require('./models/room');
 var http = require('http');
 var app = express();
 var server = http.createServer(app);
@@ -55,30 +57,49 @@ app.use('/home', homeRouter);
 app.use('/forgot', forgotPass);
 app.use('/reset', resetPass);
 
-//var usersArr = [];
-var users= {};
+var users = {};
 
 io.on('connection', (socket) => {
+  function formatAMPM(date) {
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12; 
+    minutes = minutes < 10 ? '0'+minutes : minutes;
+    var strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
+  }
+
   socket.on('login', (data) => {
     User.findOne({
       _id: data.userid
     }).then(user => {
       console.log(user.username + ' connected!');
       users[data.userid] = true;
-      socket.broadcast.emit('publish', {
+      io.emit('publish', {
         usersStatus: users
       });
       socket.on('joinroom', (data) => {
-        socket.join(data);
-      });  
-    });
-    socket.on('disconnect', () => {
-      console.log('A user disconnected!');
-      users[data.userid] = false;
-      socket.broadcast.emit('publish', {
-        usersStatus: users
+        socket.join(data.room);
+        console.log(user.username + ' joined chat room! ' + data.room)
+        Room.create({
+          room: 'general',
+          users: users
+        })
+      });
+      socket.on('chat', (data) => {
+        io.to(data.room).emit('message', { username: user.username, ...data, time: formatAMPM(new Date) });
+        Room.findOneAndUpdate({room: 'general'}, {$set: { chat: { username: user.username, ...data, time: formatAMPM(new Date) } }});
+      });
+      socket.on('disconnect', () => {
+        users[data.userid] = false;
+        io.emit('publish', {
+          usersStatus: users
+        })
+        console.log(user.username + ' disconnected!');
       })
-    })
+    });
   });
 });
 

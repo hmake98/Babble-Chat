@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var User = require('../models/user');
+var Room = require('../models/room');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -17,7 +18,6 @@ router.get('/logout', (req, res) => {
 });
 
 router.get('/:username', (req, res) => {
-  var onlineusers = req.app.get('users');
   //var io = req.app.get('socketio');
   User.find({
     username: {
@@ -29,8 +29,7 @@ router.get('/:username', (req, res) => {
     }).then(user => {    
       res.render('home', {
         users: users,
-        user: user,
-        onlineusers: onlineusers
+        user: user
       });
     })
   });
