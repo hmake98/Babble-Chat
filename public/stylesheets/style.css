@@ -214,7 +214,7 @@ label {
  */
 
 .navbar .form-control {
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   padding: .75rem 1rem;
   border-width: 0;
   border-radius: 0;
@@ -234,9 +234,15 @@ label {
 .users {
   border-radius: 15px;
   background: #eee;
-  margin: 15px;
+  margin: 8px;
   color: black;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+.users:hover{
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 
 .avatar {
@@ -256,7 +262,8 @@ label {
   width: 10px;
   border-radius: 50%;
   display: inline-block;
-  background: #80D651
+  background: #80D651;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }
 
 .offline-dot {
@@ -268,6 +275,7 @@ label {
   border-radius: 50%;
   display: inline-block;
   background: #d73814;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }
 
 .message-bar {
@@ -288,6 +296,10 @@ label {
   background-color: #F5F5F5;
 }
 
+main{
+  background: #eee;  
+}
+
 /* ext */
 .inbox_msg {
   clear: both;
@@ -303,8 +315,13 @@ label {
   width: 70%;
 }
 
+strong{
+  color: #646464;
+}
+
 .received_withd_msg p {
-  background: #ebebeb none repeat scroll 0 0;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  background: #ffffff none repeat scroll 0 0;
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
   border-bottom-left-radius: 12px;
@@ -333,6 +350,7 @@ label {
 }
 
 .sent_msg p {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   background: #0062cc none repeat scroll 0 0;
   border-top-left-radius: 12px;
   border-bottom-right-radius: 12px;
