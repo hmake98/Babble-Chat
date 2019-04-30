@@ -2,15 +2,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const roomSchema = new Schema({
-    room:{
-        type: String    
-    },
-    users:{
-        type: Array
-    },
-    chat:{
-        type: Object
-    }
+    users:[Schema.Types.ObjectId]
+},{
+    timestamps: true
 });
 
 const Room = mongoose.model('room', roomSchema);

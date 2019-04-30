@@ -10,7 +10,7 @@
         <a class="nav-link" href="">Chat</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="">{{{user.username}}}</a>
+        <a class="nav-link" href="/account/{{user.username}}">{{{user.username}}}</a>
       </li>
     </ul>
     <form class="form-inline my-2 my-lg-0">
@@ -24,12 +24,12 @@
     <nav class="col-md-2 d-none d-md-block bg-light sidebar">
       <div class="sidebar-sticky" id="style-1">
         <input class="form-control mr-sm-2" id="search" type="search" placeholder="Search" aria-label="Search"
-          onkeydown="searchUser()">
+          onsearch="searchUser()">
         <input type="input" id="userid" value="{{user._id}}" hidden>
         <input type="input" id="username" value="{{user.username}}" hidden>
-        <ul class="nav flex-column">
+        <ul class="nav flex-column" id="userslist">
           {{#users}}
-          <li class="nav-item users">
+          <li class="nav-item users {{this._id}}" data-id="{{this._id}}">
             <img src="http://www.drreddyforlife.com/wp-content/uploads/2018/05/user-placeholder-1.jpg" alt="Avatar"
               class="avatar">
             <span class="offline-dot" id="{{this._id}}"></span>
@@ -46,6 +46,26 @@
           <div class="messaging">
             <div class="inbox_msg">
               <div class="mesgs">
+                {{#chats}}
+                {{#if (eq ../user.id this.userid)}}
+                <div class="outgoing_msg">
+                  <div class="sent_msg">
+                    <p>{{this.message}}</p>
+                    <span class="time_date"> {{this.created}} </span>
+                  </div>
+                </div>
+                {{else}}
+                <div class="incoming_msg">
+                  <div class="received_msg">
+                    <div class="received_withd_msg">
+                      <strong> {{this.username}} </strong>
+                      <p>{{this.message}}</p>
+                      <span class="time_date"> {{this.created}} </span>
+                    </div>
+                  </div>
+                </div>
+                {{/if}}
+                {{/chats}}
                 <div class="msg_history" id="output">
 
                 </div>
@@ -63,6 +83,7 @@
         </div>
       </div>
     </main>
+
   </div>
 </div>
 
@@ -71,17 +92,24 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
   var socket = io();
+  var users = {{{json users}}}
 
   function searchUser() {
-    var usersIn = [];
     let search = document.getElementById('search').value;
-    var users = document.getElementsByClassName('users');
+    document.getElementById('userslist').innerHTML = "";
     for (let user of users) {
-      if (user.textContent.trim().toLowerCase().includes(search.toLowerCase())) {
-        console.log(user.textContent.trim());
-        usersIn.push(user.textContent.trim());
+      if (user.username.includes(search.toLowerCase())) {
+        document.getElementById('userslist').innerHTML += `
+          <li class="nav-item users">
+            <img src="http://www.drreddyforlife.com/wp-content/uploads/2018/05/user-placeholder-1.jpg" alt="Avatar"
+              class="avatar">
+            <span class="offline-dot" id="${user._id}"></span>
+            ${user.username}
+          </li>
+        `;
       } else {
-        console.log('No user found!');
+        document.getElementById('userslist').innerHTML =
+          `<div class="card mt-3 p-3"> <strong> No user found! </strong> </div>`;
       }
     }
   }
@@ -147,5 +175,14 @@
       `;
       }
     });
+    /* for(let user of users){
+      let tempEle = document.getElementsByClassName(user._id);
+      for(let temp of tempEle){
+        temp.addEventListener('click', () => {
+          console.log(temp.getAttribute('data-id'));
+          socket.emit('joinprivateroom', { room: 'private'+userid, chatWith: temp.getAttribute('data-id') });
+        });
+      }
+    }*/
   });
 </script>

@@ -10,9 +10,22 @@ var flash = require('req-flash');
 var User = require('./models/user');
 var Chat = require('./models/chat');
 var Room = require('./models/room');
-var http = require('http');
+var http = require('http'); 
+var hbs = require('hbs');
 var app = express();
 var server = http.createServer(app);
+
+/**
+ * Hbs helper for JSON data.
+ */
+hbs.registerHelper('json', function (content) {
+  return JSON.stringify(content);
+});
+
+hbs.registerHelper('eq', function () {
+  const args = Array.prototype.slice.call(arguments, 0, -1);
+  return args[0] == args[1]
+});
 
 var io = require('socket.io').listen(server);
 
@@ -21,6 +34,7 @@ var loginRouter = require('./routes/login');
 var homeRouter = require('./routes/home');
 var forgotPass = require('./routes/forgot');
 var resetPass = require('./routes/reset');
+var accountRouter = require('./routes/account');
 
 mongoose.connect('mongodb://localhost:27017/forgotpass', {
   useNewUrlParser: true
@@ -56,6 +70,7 @@ app.use('/login', loginRouter);
 app.use('/home', homeRouter);
 app.use('/forgot', forgotPass);
 app.use('/reset', resetPass);
+app.use('/account', accountRouter);
 
 var users = {};
 
@@ -80,18 +95,36 @@ io.on('connection', (socket) => {
       io.emit('publish', {
         usersStatus: users
       });
+
       socket.on('joinroom', (data) => {
         socket.join(data.room);
         console.log(user.username + ' joined chat room! ' + data.room)
-        Room.create({
-          room: 'general',
-          users: users
-        })
       });
+
       socket.on('chat', (data) => {
         io.to(data.room).emit('message', { username: user.username, ...data, time: formatAMPM(new Date) });
-        Room.findOneAndUpdate({room: 'general'}, {$set: { chat: { username: user.username, ...data, time: formatAMPM(new Date) } }});
+        Room.findOne({users: []}).then(room => {
+          Chat.create({
+            username: user.username,
+            userid: user._id,
+            roomid: room._id,
+            message: data.message,
+            created: formatAMPM(new Date)
+          }) 
+        })
       });
+
+      socket.on('joinprivateroom', (data) => {
+        socket.join(data.room);
+        User.findOne({_id: data.chatWith}).then(chatUser => {
+          console.log(user.username + ' and ' + chatUser.username + ' joined room '+ data.room);
+        })
+      });
+
+      // socket.on('privatechat', (data) => {
+      //   io.to(data.room).emit('privatemsg', { username: user.username, ...data, time: formatAMPM(new Date) })
+      // });
+
       socket.on('disconnect', () => {
         users[data.userid] = false;
         io.emit('publish', {

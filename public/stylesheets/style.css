@@ -312,7 +312,8 @@ main{
   display: inline-block;
   padding: 0 0 0 10px;
   vertical-align: top;
-  width: 70%;
+  min-width: 50%;
+  overflow: auto;
 }
 
 strong{
@@ -320,7 +321,6 @@ strong{
 }
 
 .received_withd_msg p {
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   background: #ffffff none repeat scroll 0 0;
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
@@ -339,8 +339,9 @@ strong{
 }
 
 .received_withd_msg {
-  border-radius: 15px;
-  width: 57%;
+  max-width: 40%;
+  width: auto;
+  overflow: auto;
 }
 
 .mesgs {
@@ -350,7 +351,6 @@ strong{
 }
 
 .sent_msg p {
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   background: #0062cc none repeat scroll 0 0;
   border-top-left-radius: 12px;
   border-bottom-right-radius: 12px;
@@ -367,8 +367,9 @@ strong{
 }
 
 .sent_msg {
+  max-width: 40%;
   float: right;
-  width: 30%;
+  width: auto;
 }
 
 .input_msg_write input {
@@ -378,4 +379,16 @@ strong{
   font-size: 15px;
   min-height: 48px;
   width: 100%;
+}
+
+#send{
+  border-radius: 20px;
+}
+
+.img-circle{
+  border-radius: 50%;
+}
+
+.text-account{
+  color: #646464;
 }
