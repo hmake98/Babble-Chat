@@ -341,6 +341,7 @@ strong{
 .received_withd_msg {
   max-width: 40%;
   width: auto;
+  float: left;
   overflow: auto;
 }
 
