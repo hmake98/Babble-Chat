@@ -28,7 +28,6 @@ router.post('/signup', (req, res) => {
           } else {
             req.body.password = hash
             User.create(req.body).then(user => {
-              req.session.user = user
               res.redirect('/login');
             }).catch(err => {
               res.status(500).json({

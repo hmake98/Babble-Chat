@@ -103,7 +103,7 @@
           <li class="nav-item users">
             <img src="http://www.drreddyforlife.com/wp-content/uploads/2018/05/user-placeholder-1.jpg" alt="Avatar"
               class="avatar">
-            <span class="offline-dot" id="${user._id}"></span>
+            <span id="${user._id}"></span>
             ${user.username}
           </li>
         `;
@@ -175,14 +175,14 @@
       `;
       }
     });
-    /* for(let user of users){
+    for(let user of users){
       let tempEle = document.getElementsByClassName(user._id);
       for(let temp of tempEle){
         temp.addEventListener('click', () => {
           console.log(temp.getAttribute('data-id'));
-          socket.emit('joinprivateroom', { room: 'private'+userid, chatWith: temp.getAttribute('data-id') });
+          socket.emit('joinprivateroom', { room: temp.getAttribute('data-id')+'.'+userid, chatWith: temp.getAttribute('data-id') });
         });
       }
-    }*/
+    }
   });
 </script>

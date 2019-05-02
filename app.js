@@ -117,13 +117,18 @@ io.on('connection', (socket) => {
       socket.on('joinprivateroom', (data) => {
         socket.join(data.room);
         User.findOne({_id: data.chatWith}).then(chatUser => {
-          console.log(user.username + ' and ' + chatUser.username + ' joined room '+ data.room);
-        })
+          Room.findOne({ users: [chatUser._id, user.id]  }).then(room => {
+            if(room === null){
+              console.log("Room not exists! Creating room for users.");
+              console.log(room);
+              //Room.update({ users: [chatUser._id, user.id]}, { $set: { users: [chatUser._id, user.id]}},{upsert: true}).then(room => console.log(room));
+            }else{
+              console.log("Room exist already! ")
+            }
+          });
+          //console.log(chatUser.username + ' and ' + user.username + ' joined room '+ data.room);
+        });
       });
-
-      // socket.on('privatechat', (data) => {
-      //   io.to(data.room).emit('privatemsg', { username: user.username, ...data, time: formatAMPM(new Date) })
-      // });
 
       socket.on('disconnect', () => {
         users[data.userid] = false;
