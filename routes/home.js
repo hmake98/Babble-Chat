@@ -22,12 +22,8 @@ router.get('/:username', (req, res) => {
   if (!req.session.user) {
     res.redirect('/login');
   } else {
-    Room.findOne({
-      users: []
-    }).then(room => {
-      Chat.find({
-        roomid: room._id
-      }).then(chat => {
+    Room.find({}).then(room => {
+      Chat.find({}).then(chat => {
         //var io = req.app.get('socketio');
         User.find({
           username: {
@@ -40,7 +36,8 @@ router.get('/:username', (req, res) => {
             res.render('home', {
               users: users,
               user: user,
-              chats: chat
+              chats: chat,
+              rooms: room
             });
           })
         });

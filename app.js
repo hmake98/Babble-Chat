@@ -35,6 +35,7 @@ var homeRouter = require('./routes/home');
 var forgotPass = require('./routes/forgot');
 var resetPass = require('./routes/reset');
 var accountRouter = require('./routes/account');
+var chatRouter = require('./routes/chats');
 
 mongoose.connect('mongodb://localhost:27017/forgotpass', {
   useNewUrlParser: true
@@ -71,6 +72,7 @@ app.use('/home', homeRouter);
 app.use('/forgot', forgotPass);
 app.use('/reset', resetPass);
 app.use('/account', accountRouter);
+app.use('/chats', chatRouter);
 
 var users = {};
 
@@ -92,6 +94,7 @@ io.on('connection', (socket) => {
     }).then(user => {
       console.log(user.username + ' connected!');
       users[data.userid] = true;
+      
       io.emit('publish', {
         usersStatus: users
       });
@@ -115,18 +118,30 @@ io.on('connection', (socket) => {
       });
 
       socket.on('joinprivateroom', (data) => {
+        console.log(data);
         socket.join(data.room);
         User.findOne({_id: data.chatWith}).then(chatUser => {
-          Room.findOne({ users: [chatUser._id, user.id]  }).then(room => {
+          Room.findOne({ users: { $all : [chatUser._id, user.id] } }).then(room => {
             if(room === null){
-              console.log("Room not exists! Creating room for users.");
-              console.log(room);
-              //Room.update({ users: [chatUser._id, user.id]}, { $set: { users: [chatUser._id, user.id]}},{upsert: true}).then(room => console.log(room));
+              Room.update({ users: [chatUser._id, user.id]}, { $set: { users: [chatUser._id, user.id], roomName: data.room}},{upsert: true});
             }else{
-              console.log("Room exist already! ")
+              console.log("Room exist already!");
             }
           });
-          //console.log(chatUser.username + ' and ' + user.username + ' joined room '+ data.room);
+          console.log(chatUser.username + ' and ' + user.username + ' joined room '+ data.room);
+        });
+      });
+
+      socket.on('privatechat', (data) => {
+        socket.broadcast.to(data.room).emit('privatemessage', { username: user.username, ...data, time: formatAMPM(new Date)});
+        Room.findOne({roomName: data.room}).then(room => {
+          Chat.create({
+            username: user.username,
+            userid: user._id,
+            roomid: room._id,
+            message: data.message,
+            created: formatAMPM(new Date)
+          })
         });
       });
 

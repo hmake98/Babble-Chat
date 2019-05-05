@@ -1,0 +1,187 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01"
+        aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+        <a href="" class="navbar-brand"> Babble </a>
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="">Chat</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/account/{{user.username}}">{{{user.username}}}</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <a class="btn btn-danger my-2 my-sm-0" href="/home/logout">Logout</a>
+        </form>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <div class="sidebar-sticky" id="style-1">
+                <input class="form-control mr-sm-2" id="search" type="search" placeholder="Search" aria-label="Search"
+                    onsearch="searchUser()">
+                <input type="input" id="userid" value="{{user._id}}" hidden>
+                <input type="input" id="chatterid" value="{{chatter}}" hidden>
+                <input type="input" id="username" value="{{user.username}}" hidden>
+                <ul class="nav flex-column" id="userslist">
+                    {{#users}}
+                    <li class="nav-item users {{this._id}}" data-id="{{this._id}}">
+                        <img src="http://www.drreddyforlife.com/wp-content/uploads/2018/05/user-placeholder-1.jpg"
+                            alt="Avatar" class="avatar">
+                        <span class="offline-dot" id="{{this._id}}"></span>
+                        {{this.username}}
+                    </li>
+                    {{/users}}
+                </ul>
+            </div>
+        </nav>
+
+        <main role="main" class="col-md-10 ml-sm-auto col-lg-10 px-4">
+            <div class="chat">
+                <div class="container-fluid">
+
+                    <div class="messaging" id="message-area">
+                        <div class="inbox_msg">
+                            <div class="mesgs">
+                                
+                                {{#chats}}
+                                {{#if (eq ../user.id this.userid)}}
+                                <div class="outgoing_msg">
+                                    <div class="sent_msg">
+                                        <p>{{this.message}}</p>
+                                        <span class="time_date"> {{this.created}} </span>
+                                    </div>
+                                </div>
+                                {{else}}
+                                <div class="incoming_msg">
+                                    <div class="received_msg">
+                                        <div class="received_withd_msg">
+                                            <strong> {{this.username}} </strong>
+                                            <p>{{this.message}}</p>
+                                            <span class="time_date"> {{this.created}} </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{/if}}
+                                {{/chats}}
+                                
+                                <div class="msg_history" id="output">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row message-bar">
+                <div class="col-md-10">
+                    <input class="form-control message-button" placeholder="Enter message" id="message">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary" id="send"> Send </button>
+                </div>
+            </div>
+        </main>
+
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.4.0.min.js"
+    integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io();
+    var users = {{{json users}}};
+
+    function searchUser() {
+        let search = document.getElementById('search').value;
+        document.getElementById('userslist').innerHTML = "";
+        for (let user of users) {
+            if (user.username.includes(search.toLowerCase())) {
+                document.getElementById('userslist').innerHTML += `
+                <li class="nav-item users">
+                    <img src="http://www.drreddyforlife.com/wp-content/uploads/2018/05/user-placeholder-1.jpg" alt="Avatar"
+                    class="avatar">
+                    <span id="${user._id}"></span>
+                    ${user.username}
+                </li>
+            `;
+            } else {
+                document.getElementById('userslist').innerHTML =
+                    `<div class="card mt-3 p-3"> <strong> No user found! </strong> </div>`;
+            }
+        }
+    }
+
+    socket.on('connect', () => {
+        console.log('Connected to server.');
+        var userid = document.getElementById('userid').value;
+        var chatterid = document.getElementById('chatterid').value;
+
+        /*socket.on('publish', (data) => {
+            console.log(data)
+            for (let key in data.usersStatus) {
+                if (data.usersStatus[key]) {
+                    if (key !== userid) {
+                        let user = document.getElementById(key);
+                        user.classList.remove('offline-dot');
+                        user.classList.add('online-dot');
+                        console.log(user)
+                    }
+                } else {
+                    let user = document.getElementById(key);
+                    user.classList.remove('online-dot');
+                    user.classList.add('offline-dot');
+                    console.log(user)
+                }
+            }
+        });*/
+
+        socket.emit('joinprivateroom', {
+            room: userid + '.' + chatterid,
+            chatWith: chatterid
+        });
+
+        var send = document.getElementById('send');
+        send.addEventListener('click', () => {
+            let messsage = document.getElementById('message');
+            console.log(message.value);
+            socket.emit('privatechat', {
+                room: chatterid + '.' + userid,
+                userid: userid,
+                message: message.value
+            });
+            messsage.value = '';
+        });
+
+        socket.on('privatemessage', (data) => {
+            if(data.userid == userid){
+                document.getElementById('output').innerHTML += `
+                <div class="outgoing_msg">
+                    <div class="sent_msg">
+                        <p>${data.message}</p>
+                        <span class="time_date"> ${data.time} </span>
+                    </div>
+                </div>
+                `;
+            } else {
+                document.getElementById('output').innerHTML += `
+                <div class="incoming_msg">
+                    <div class="received_msg">
+                        <div class="received_withd_msg">
+                            <strong>${data.username}</strong>
+                            <p>${data.message}</p>
+                            <span class="time_date"> ${data.time} </span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            }
+        });
+    })
+</script>
