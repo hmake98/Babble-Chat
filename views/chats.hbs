@@ -95,7 +95,7 @@
     integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    var socket = io();
+    var socket = io.connect('/chats'); 
     var users = {{{json users}}};
 
     function searchUser() {
@@ -123,8 +123,9 @@
         var userid = document.getElementById('userid').value;
         var chatterid = document.getElementById('chatterid').value;
 
-        /*socket.on('publish', (data) => {
+        socket.on('publish', (data) => {
             console.log(data)
+            
             for (let key in data.usersStatus) {
                 if (data.usersStatus[key]) {
                     if (key !== userid) {
@@ -140,7 +141,7 @@
                     console.log(user)
                 }
             }
-        });*/
+        });
 
         socket.emit('joinprivateroom', {
             room: userid + '.' + chatterid,
@@ -183,5 +184,5 @@
             `;
             }
         });
-    })
+    }) 
 </script>
