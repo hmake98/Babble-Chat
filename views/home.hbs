@@ -30,7 +30,7 @@
         <ul class="nav flex-column" id="userslist">
           {{#users}}
           <li class="nav-item users {{this._id}}" data-id="{{this._id}}">
-            <img src="http://www.drreddyforlife.com/wp-content/uploads/2018/05/user-placeholder-1.jpg" alt="Avatar"
+            <img src="http://sg-fs.com/wp-content/uploads/2017/08/user-placeholder.png" alt="Avatar"
               class="avatar">
             <span class="offline-dot" id="{{this._id}}"></span>
             {{this.username}}
@@ -81,7 +81,7 @@
           <input class="form-control message-button" placeholder="Enter message" id="message">
         </div>
         <div class="col-md-2">
-          <button class="btn btn-primary" id="send"> Send </button>
+          <button class="btn btn-primary" id="send"> <i class="fas fa-paper-plane"></i> </button>
         </div>
       </div>
     </main>
@@ -177,6 +177,14 @@
         </div>
       `;
       }
+    });
+
+    socket.on('leftuser', (data) => {
+      document.getElementById('output').innerHTML += `
+      <div class="alert alert-danger" role="alert">
+        ${data.message}
+      </div>
+      `;
     });
 
     for (let user of users) {
