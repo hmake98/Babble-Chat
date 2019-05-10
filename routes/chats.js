@@ -26,22 +26,54 @@ router.get('/:chaterid', (req, res) => {
                 $all: [req.params.chaterid, req.session.user[0]._id]
             }
         }).then(room => {
-            Chat.find({
-                roomid: room._id
-            }).then(chat => {
-                User.find({
-                    _id: {
-                        $ne: req.session.user[0]._id
+            if (room === null) {
+                Room.updateOne({
+                    users: {
+                        $all: [req.params.chaterid, req.session.user[0]._id]
                     }
-                }).then(users => {
-                    res.render('chats', {
-                        chatter: req.params.chaterid,
-                        user: req.session.user[0],
-                        users: users,
-                        chats: chat
+                },
+                {
+                    $set: {
+                        users: [req.params.chaterid, req.session.user[0]._id]        
+                    }
+                },{
+                    upsert: true
+                }).then(newroom => {
+                    Chat.find({
+                        roomid: newroom._id
+                    }).then(chat => {
+                        User.find({
+                            _id: {
+                                $ne: req.session.user[0]._id
+                            }
+                        }).then(users => {
+                            res.render('chats', {
+                                chatter: req.params.chaterid,
+                                user: req.session.user[0],
+                                users: users,
+                                chats: chat
+                            });
+                        });
+                    })
+                })
+            } else {
+                Chat.find({
+                    roomid: room._id
+                }).then(chat => {
+                    User.find({
+                        _id: {
+                            $ne: req.session.user[0]._id
+                        }
+                    }).then(users => {
+                        res.render('chats', {
+                            chatter: req.params.chaterid,
+                            user: req.session.user[0],
+                            users: users,
+                            chats: chat
+                        });
                     });
                 });
-            });
+            }
         });
     }
 });

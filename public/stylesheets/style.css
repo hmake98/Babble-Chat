@@ -156,7 +156,7 @@ label {
   /* Behind the navbar */
   padding: 48px 0 0;
   /* Height of navbar */
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }
 
 .sidebar-sticky {
@@ -392,4 +392,10 @@ strong{
 
 .text-account{
   color: #646464;
+}
+
+.jumbotron{
+  border-bottom-left-radius: 25px !important;
+  border-bottom-right-radius: 25px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }

@@ -4,8 +4,6 @@ const Schema = mongoose.Schema;
 const roomSchema = new Schema({
     users:[Schema.Types.ObjectId]
 },{
-    roomName: String
-},{
     timestamps: true
 });
 

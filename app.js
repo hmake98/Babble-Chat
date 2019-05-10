@@ -7,6 +7,7 @@ var expressSession = require('express-session');
 var mongoose = require('mongoose');
 var MongoStore = require('connect-mongo')(expressSession);
 var flash = require('req-flash');
+var chalk = require('chalk');
 var User = require('./models/user');
 var Chat = require('./models/chat');
 var Room = require('./models/room');
@@ -93,7 +94,7 @@ io.on('connection', (socket) => {
     User.findOne({
       _id: data.userid
     }).then(user => {
-      console.log(user.username + ' connected!');
+      console.log(chalk.red(user.username + ' connected!'));
       users[data.userid] = true;
 
       io.emit('publish', {
@@ -136,20 +137,18 @@ io.on('connection', (socket) => {
 });
 
 chatsNs.on('connection', (socket) => {
-  socket.on('login', (data) => {
+  socket.on('privatelogin', (data) => {
     User.findOne({
       _id: data.userid
     }).then(user => {
-      console.log(user.username + ' connected! ')
+      console.log(chalk.red(user.username + ' connected!'))
       users[data.userid] = true;
 
-      socket.emit('publish', {
+      socket.emit('privatepublish', {
         usersStatus: users
       });
 
       socket.on('joinprivateroom', (data) => {
-        console.log(data);
-        socket.join(data.room);
         User.findOne({
           _id: data.chatWith
         }).then(chatUser => {
@@ -159,6 +158,7 @@ chatsNs.on('connection', (socket) => {
             }
           }).then(room => {
             if (room === null) {
+              //console.log(chalk.red("Room not created! Creating the room"));
               Room.update({
                 users: [chatUser._id, user.id]
               }, {
@@ -168,24 +168,32 @@ chatsNs.on('connection', (socket) => {
                 }
               }, {
                 upsert: true
+              }).then(newroom => {
+                socket.join(newroom._id);
+                console.log(chalk.red(user.username + ' joined room ' + room._id));
               });
             } else {
-              console.log("Room exist already!");
+              console.log(chalk.red("Room exist already!"));
             }
+            socket.join(room._id);
+            console.log(chalk.red(user.username + ' joined room ' + room._id));
           });
-          console.log(chatUser.username + ' and ' + user.username + ' joined room ' + data.room);
         });
       });
 
       socket.on('privatechat', (data) => {
-        socket.broadcast.to(data.room).emit('privatemessage', {
-          username: user.username,
-          ...data,
-          time: formatAMPM(new Date)
-        });
         Room.findOne({
-          roomName: data.room
+          users: {
+            $all: [data.userid, data.chatterid]
+          }
         }).then(room => {
+          //console.log("Message from " + data.userid + ": " + data.message);
+          //console.log("Broadcasting the data to room " + room._id);
+          io.of('/chats').emit('privatemessage', {
+            username: user.username,
+            ...data,
+            time: formatAMPM(new Date)
+          });
           Chat.create({
             username: user.username,
             userid: user._id,
@@ -201,6 +209,7 @@ chatsNs.on('connection', (socket) => {
         socket.emit('publish', {
           userStatus: users
         })
+        io.of('/chats').emit('leftmessage', { message: user.username + ' left Chat.'});
         console.log(user.username + ' disconnected!');
       })
     })

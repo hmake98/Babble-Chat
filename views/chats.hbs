@@ -50,7 +50,7 @@
                             <div class="mesgs">
                                 
                                 {{#chats}}
-                                {{#if (eq ../user.id this.userid)}}
+                                {{#if (eq ../user._id this.userid)}}
                                 <div class="outgoing_msg">
                                     <div class="sent_msg">
                                         <p>{{this.message}}</p>
@@ -122,23 +122,22 @@
         console.log('Connected to server.');
         var userid = document.getElementById('userid').value;
         var chatterid = document.getElementById('chatterid').value;
+        socket.emit('privatelogin', {
+            userid: userid
+        });
 
-        socket.on('publish', (data) => {
-            console.log(data)
-            
+        socket.on('privatepublish', (data) => {
             for (let key in data.usersStatus) {
                 if (data.usersStatus[key]) {
                     if (key !== userid) {
                         let user = document.getElementById(key);
                         user.classList.remove('offline-dot');
                         user.classList.add('online-dot');
-                        console.log(user)
                     }
                 } else {
                     let user = document.getElementById(key);
                     user.classList.remove('online-dot');
                     user.classList.add('offline-dot');
-                    console.log(user)
                 }
             }
         });
@@ -151,10 +150,9 @@
         var send = document.getElementById('send');
         send.addEventListener('click', () => {
             let messsage = document.getElementById('message');
-            console.log(message.value);
             socket.emit('privatechat', {
-                room: chatterid + '.' + userid,
                 userid: userid,
+                chatterid: chatterid,
                 message: message.value
             });
             messsage.value = '';
@@ -184,5 +182,13 @@
             `;
             }
         });
+
+        socket.on('leftmessage', (data) => {
+            document.getElementById('output').innerHTML += `
+            <div class="alert alert-danger" role="alert">
+                ${data.message}
+            </div>
+        `;
+        })
     }) 
 </script>

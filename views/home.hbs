@@ -143,7 +143,7 @@
     });
     var send = document.getElementById('send');
     send.addEventListener('click', () => {
-      let message = document.getElementsByClassName('message-button').value;
+      let message = document.getElementById('message').value;
       if (message !== '') {
         socket.emit('chat', {
           room: 'general',
@@ -184,21 +184,6 @@
       for (let temp of tempEle) {
         temp.addEventListener('click', () => {
           window.location.href = `/chats/${temp.getAttribute('data-id')}`;
-          /*socket.emit('joinprivateroom', {
-            room: temp.getAttribute('data-id') + '.' + userid,
-            chatWith: temp.getAttribute('data-id')
-          });
-          var send = document.getElementById('send');
-          send.addEventListener('click', () => {
-            let message = document.getElementById('message').value;
-            console.log(message);
-            socket.emit('privatechat', {
-              room: temp.getAttribute('data-id') + '.' + userid,
-              userid: userid,
-              message: message
-            });
-            document.getElementById('message').value = '';
-          });*/
         });
       }
     }
