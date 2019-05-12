@@ -213,7 +213,7 @@ label {
  * Navbar
  */
 .navbar{
-  background: linear-gradient(200deg, #414345, #232526);
+  background: linear-gradient(250deg, #136a8a, #267871);
 }
 
 .btn-danger{
@@ -287,7 +287,7 @@ label {
 .message-bar {
   margin-left: -24px !important;
   width: 90%;
-  background: linear-gradient(270deg, #414345, #232526);
+  background: linear-gradient(250deg, #136a8a, #267871);
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22) !important;
   bottom: 0;
   position: fixed;
@@ -360,7 +360,7 @@ strong{
 }
 
 .sent_msg p {
-  background: linear-gradient(180deg, #414345, #232526);
+  background: linear-gradient(250deg, #136a8a, #267871);
   border-top-left-radius: 12px;
   border-bottom-right-radius: 12px;
   border-bottom-left-radius: 12px;
@@ -368,6 +368,7 @@ strong{
   color: #fff;
   padding: 15px;
   width: 100%;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 .outgoing_msg {
@@ -392,6 +393,7 @@ strong{
 
 #send{
   border-radius: 51%;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.30), 0 10px 10px rgba(0,0,0,0.22);
 }
 
 .img-circle{

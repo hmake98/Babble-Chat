@@ -100,15 +100,17 @@
     let search = document.getElementById('search').value;
     document.getElementById('userslist').innerHTML = "";
     for (let user of users) {
-      if (user.username.includes(search.toLowerCase())) {
+      if (user.username.toLowerCase().includes(search.toLowerCase())) {
         document.getElementById('userslist').innerHTML += `
           <li class="nav-item users">
-            <img src="http://www.drreddyforlife.com/wp-content/uploads/2018/05/user-placeholder-1.jpg" alt="Avatar"
+            <img src="http://sg-fs.com/wp-content/uploads/2017/08/user-placeholder.png" alt="Avatar"
               class="avatar">
-            <span id="${user._id}"></span>
+            <span class="offline-dot" id="${user._id}"></span>
             ${user.username}
           </li>
         `;
+      } else if(!user.username.toLowerCase().includes(search.toLowerCase())) {
+        
       } else {
         document.getElementById('userslist').innerHTML =
           `<div class="card mt-3 p-3"> <strong> No user found! </strong> </div>`;

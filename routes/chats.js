@@ -18,6 +18,7 @@ router.get('/logout', (req, res) => {
 });
 
 router.get('/:chaterid', (req, res) => {
+    User.findOne({_id: req.params.chaterid}).then(chatuser => { 
     if (!req.session.user) {
         res.redirect('/login');
     } else {
@@ -27,35 +28,18 @@ router.get('/:chaterid', (req, res) => {
             }
         }).then(room => {
             if (room === null) {
-                Room.updateOne({
-                    users: {
-                        $all: [req.params.chaterid, req.session.user[0]._id]
+                User.find({
+                    _id: {
+                        $ne: req.session.user[0]._id
                     }
-                },
-                {
-                    $set: {
-                        users: [req.params.chaterid, req.session.user[0]._id]        
-                    }
-                },{
-                    upsert: true
-                }).then(newroom => {
-                    Chat.find({
-                        roomid: newroom._id
-                    }).then(chat => {
-                        User.find({
-                            _id: {
-                                $ne: req.session.user[0]._id
-                            }
-                        }).then(users => {
-                            res.render('chats', {
-                                chatter: req.params.chaterid,
-                                user: req.session.user[0],
-                                users: users,
-                                chats: chat
-                            });
-                        });
-                    })
-                })
+                }).then(users => {
+                    res.render('chats', {
+                        chatter: req.params.chaterid,
+                        user: req.session.user[0],
+                        users: users,
+                        chatuser: chatuser.username
+                    });
+                });
             } else {
                 Chat.find({
                     roomid: room._id
@@ -69,13 +53,15 @@ router.get('/:chaterid', (req, res) => {
                             chatter: req.params.chaterid,
                             user: req.session.user[0],
                             users: users,
-                            chats: chat
+                            chats: chat,
+                            chatuser: chatuser.username
                         });
                     });
                 });
             }
         });
     }
+});
 });
 
 module.exports = router;

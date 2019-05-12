@@ -7,7 +7,7 @@
         <a href="" class="navbar-brand"> Babble </a>
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item">
-                <a class="nav-link" href="">Chat</a>
+                <a class="nav-link" href="/home/{{user.username}}">General Chat</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/account/{{user.username}}">{{{user.username}}}</a>
@@ -23,6 +23,9 @@
     <div class="row">
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
             <div class="sidebar-sticky" id="style-1">
+                <div class="nav-item users text-center bg-success text-white">
+                    {{chatuser}}        
+                </div>
                 <input class="form-control mr-sm-2" id="search" type="search" placeholder="Search" aria-label="Search"
                     onsearch="searchUser()">
                 <input type="input" id="userid" value="{{user._id}}" hidden>
@@ -102,18 +105,20 @@
         let search = document.getElementById('search').value;
         document.getElementById('userslist').innerHTML = "";
         for (let user of users) {
-            if (user.username.includes(search.toLowerCase())) {
+            if (user.username.toLowerCase().includes(search.toLowerCase())) {
                 document.getElementById('userslist').innerHTML += `
                 <li class="nav-item users">
-                    <img src="http://www.drreddyforlife.com/wp-content/uploads/2018/05/user-placeholder-1.jpg" alt="Avatar"
-                    class="avatar">
-                    <span id="${user._id}"></span>
+                    <img src="http://sg-fs.com/wp-content/uploads/2017/08/user-placeholder.png" alt="Avatar"
+                        class="avatar">
+                    <span class="offline-dot" id="${user._id}"></span>
                     ${user.username}
                 </li>
             `;
-            } else {
-                document.getElementById('userslist').innerHTML =
-                    `<div class="card mt-3 p-3"> <strong> No user found! </strong> </div>`;
+        } else if(!user.username.toLowerCase().includes(search.toLowerCase())) {
+        
+        } else {
+            document.getElementById('userslist').innerHTML =
+                `<div class="card mt-3 p-3"> <strong> No user found! </strong> </div>`;
             }
         }
     }
@@ -143,7 +148,6 @@
         });
 
         socket.emit('joinprivateroom', {
-            room: userid + '.' + chatterid,
             chatWith: chatterid
         });
 
@@ -190,5 +194,14 @@
             </div>
         `;
         })
+
+        for (let user of users) {
+            let tempEle = document.getElementsByClassName(user._id);
+            for (let temp of tempEle) {
+                temp.addEventListener('click', () => {
+                    window.location.href = `/chats/${temp.getAttribute('data-id')}`;
+                });
+            }
+        }
     }) 
 </script>
