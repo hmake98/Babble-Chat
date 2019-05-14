@@ -24,7 +24,7 @@
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
             <div class="sidebar-sticky" id="style-1">
                 <div class="nav-item users text-center bg-success text-white">
-                    {{chatuser}}        
+                    {{chatuser}}
                 </div>
                 <input class="form-control mr-sm-2" id="search" type="search" placeholder="Search" aria-label="Search"
                     onsearch="searchUser()">
@@ -34,8 +34,8 @@
                 <ul class="nav flex-column" id="userslist">
                     {{#users}}
                     <li class="nav-item users {{this._id}}" data-id="{{this._id}}">
-                        <img src="http://sg-fs.com/wp-content/uploads/2017/08/user-placeholder.png"
-                            alt="Avatar" class="avatar">
+                        <img src="http://sg-fs.com/wp-content/uploads/2017/08/user-placeholder.png" alt="Avatar"
+                            class="avatar">
                         <span class="offline-dot" id="{{this._id}}"></span>
                         {{this.username}}
                     </li>
@@ -51,7 +51,7 @@
                     <div class="messaging" id="message-area">
                         <div class="inbox_msg">
                             <div class="mesgs">
-                                
+
                                 {{#chats}}
                                 {{#if (eq ../user._id this.userid)}}
                                 <div class="outgoing_msg">
@@ -72,7 +72,7 @@
                                 </div>
                                 {{/if}}
                                 {{/chats}}
-                                
+
                                 <div class="msg_history" id="output">
                                 </div>
                             </div>
@@ -81,13 +81,10 @@
 
                 </div>
             </div>
-            <div class="row message-bar">
-                <div class="col-md-10">
-                    <input class="form-control message-button" placeholder="Enter message" id="message">
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-primary" id="send"> <i class="fas fa-paper-plane"></i> </button>
-                </div>
+            <div class="message-bar">
+                <input class="form-control message-button" placeholder="Enter message" id="message"
+                    onkeypress="userTyping();">
+                <button class="btn btn-primary" id="send"> <i class="fas fa-paper-plane"></i> </button>
             </div>
         </main>
 
@@ -98,8 +95,14 @@
     integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    var socket = io.connect('/chats'); 
-    var users = {{{json users}}};
+    var socket = io.connect('/chats');
+    var users = {
+        {
+            {
+                json users
+            }
+        }
+    };
 
     function searchUser() {
         let search = document.getElementById('search').value;
@@ -114,13 +117,28 @@
                     ${user.username}
                 </li>
             `;
-        } else if(!user.username.toLowerCase().includes(search.toLowerCase())) {
-        
-        } else {
-            document.getElementById('userslist').innerHTML =
-                `<div class="card mt-3 p-3"> <strong> No user found! </strong> </div>`;
+            } else if (!user.username.toLowerCase().includes(search.toLowerCase())) {
+
+            } else {
+                document.getElementById('userslist').innerHTML =
+                    `<div class="card mt-3 p-3"> <strong> No user found! </strong> </div>`;
             }
         }
+    }
+
+    var timeout;
+
+    function timeoutFunction() {
+        socket.emit("typing", {
+            typing: false
+        });
+    }
+
+    function userTyping() {
+        socket.emit('typing', {
+            typing: true
+        });
+        setTimeout(timeoutFunction, 2000);
     }
 
     socket.on('connect', () => {
@@ -154,16 +172,18 @@
         var send = document.getElementById('send');
         send.addEventListener('click', () => {
             let messsage = document.getElementById('message');
-            socket.emit('privatechat', {
-                userid: userid,
-                chatterid: chatterid,
-                message: message.value
-            });
+            if (message.value !== '') {
+                socket.emit('privatechat', {
+                    userid: userid,
+                    chatterid: chatterid,
+                    message: message.value
+                });
+            }
             messsage.value = '';
         });
 
         socket.on('privatemessage', (data) => {
-            if(data.userid == userid){
+            if (data.userid == userid) {
                 document.getElementById('output').innerHTML += `
                 <div class="outgoing_msg">
                     <div class="sent_msg">
@@ -187,14 +207,6 @@
             }
         });
 
-        socket.on('leftmessage', (data) => {
-            document.getElementById('output').innerHTML += `
-            <div class="alert alert-danger" role="alert">
-                ${data.message}
-            </div>
-        `;
-        })
-
         for (let user of users) {
             let tempEle = document.getElementsByClassName(user._id);
             for (let temp of tempEle) {
@@ -203,5 +215,19 @@
                 });
             }
         }
-    }) 
+
+        socket.on('typinguser', (data) => {
+            if (data.typing) {
+                document.getElementById('type').innerHTML = `
+        <div id="wave">
+          <span class="user"> <strong> ${data.username} </strong> </span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>`;
+            } else {
+                document.getElementById('type').innerHTML = ``;
+            }
+        })
+    })
 </script>

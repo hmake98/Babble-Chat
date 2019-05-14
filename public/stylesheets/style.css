@@ -148,6 +148,7 @@ label {
  */
 
 .sidebar {
+  height: auto;
   position: fixed;
   top: 0;
   bottom: 0;
@@ -156,13 +157,13 @@ label {
   /* Behind the navbar */
   padding: 48px 0 0;
   /* Height of navbar */
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
 .sidebar-sticky {
   position: relative;
   top: 0;
-  height: calc(100vh - 48px);
+  height: 100%;
   padding-top: .5rem;
   overflow-x: hidden;
   overflow-y: auto;
@@ -212,11 +213,11 @@ label {
 /*
  * Navbar
  */
-.navbar{
+.navbar {
   background: linear-gradient(250deg, #136a8a, #267871);
 }
 
-.btn-danger{
+.btn-danger {
   border-radius: 30px !important;
 }
 
@@ -243,12 +244,12 @@ label {
   margin: 8px;
   color: black;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
 
-.users:hover{
-  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+.users:hover {
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
 .avatar {
@@ -269,7 +270,7 @@ label {
   border-radius: 50%;
   display: inline-block;
   background: #80D651;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
 .offline-dot {
@@ -281,21 +282,28 @@ label {
   border-radius: 50%;
   display: inline-block;
   background: #d73814;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
 .message-bar {
-  margin-left: -24px !important;
-  width: 90%;
+  margin-left: -23px !important;
+  width: 100%;
   background: linear-gradient(250deg, #136a8a, #267871);
-  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22) !important;
+  box-shadow: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22) !important;
   bottom: 0;
   position: fixed;
   padding: 20px;
 }
 
 .message-bar input {
+  display: inline-block;
+  width: 70%;
   border-radius: 20px;
+}
+
+.message-bar button{
+  display: inline-block;
+  margin-left: 25px;
 }
 
 #style-1::-webkit-scrollbar {
@@ -303,8 +311,8 @@ label {
   background-color: #F5F5F5;
 }
 
-main{
-  background: #D9D9D9;  
+main {
+  background: #D9D9D9;
 }
 
 /* ext */
@@ -323,13 +331,13 @@ main{
   overflow: auto;
 }
 
-strong{
+strong {
   color: #646464;
 }
 
 .received_withd_msg p {
   background: #ffffff none repeat scroll 0 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
   border-bottom-left-radius: 12px;
@@ -368,7 +376,7 @@ strong{
   color: #fff;
   padding: 15px;
   width: 100%;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
 .outgoing_msg {
@@ -391,20 +399,20 @@ strong{
   width: 100%;
 }
 
-#send{
+#send {
   border-radius: 51%;
-  box-shadow: 0 10px 28px rgba(0,0,0,0.30), 0 10px 10px rgba(0,0,0,0.22);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.30), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
-.img-circle{
+.img-circle {
   border-radius: 50%;
 }
 
-.text-account{
+.text-account {
   color: #646464;
 }
 
-.account-container{
+.account-container {
   background-image: url('https://backgrounddownload.com/wp-content/uploads/2018/09/whatsapp-chat-background-image.jpg');
   background-position: center;
   background-repeat: no-repeat;
@@ -415,13 +423,99 @@ strong{
   min-height: 100vh;
 }
 
-.jumbotron{
+.jumbotron {
   background: #fff !important;
   border-bottom-left-radius: 25px !important;
   border-bottom-right-radius: 25px !important;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
-.alert{
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+.alert {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+div#wave {
+  position: fixed;
+  bottom: 4px;
+  text-align: center;
+  width: 200px;
+  height: 100px;
+  margin-left: auto;
+  margin-right: auto; 
+}
+
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 3px;
+  background: linear-gradient(250deg, #136a8a, #267871);
+  animation: wave 1.3s linear infinite;
+}
+
+#wave.user{
+  background: #333;
+  display: inline-block;
+  margin-left: 0px;
+}
+
+.dot:nth-child(2) {
+  animation-delay: -1.1s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: -0.9s;
+}
+
+@keyframes wave {
+
+  0%,
+  60%,
+  100% {
+    transform: initial;
+  }
+
+  30% {
+    transform: translateY(-15px);
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .navbar{
+    width: 100%;
+  }
+
+  .nav-link{
+    text-align: center;
+  }
+
+  .outgoing_msg {
+    margin: 0px -13px 0px;
+  }
+
+  .received_withd_msg {
+    max-width: 100%;
+  }
+
+  .incoming_msg{
+    margin: 0px 0px 0px -33px !important;
+  }
+
+  .sent_msg{
+    max-width: 100%;
+  }
+
+  .btn-danger{
+    width: 100%;
+  }
+
+  .message-bar input{
+    width: 80%;
+    display: inline-block;
+  }
+
+  #send{
+    
+  }
 }

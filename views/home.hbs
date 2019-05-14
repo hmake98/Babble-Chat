@@ -19,7 +19,7 @@
   </div>
 </nav>
 
-<div class="container-fluid">
+<div class="container-fluid" id="messeging">
   <div class="row">
     <nav class="col-md-2 d-none d-md-block bg-light sidebar">
       <div class="sidebar-sticky" id="style-1">
@@ -76,13 +76,11 @@
 
         </div>
       </div>
-      <div class="row message-bar">
-        <div class="col-md-10">
-          <input class="form-control message-button" placeholder="Enter message" id="message">
-        </div>
-        <div class="col-md-2">
-          <button class="btn btn-primary" id="send"> <i class="fas fa-paper-plane"></i> </button>
-        </div>
+      <div id="type"> 
+      </div>
+      <div class="message-bar">
+        <input class="form-control message-button" placeholder="Enter message" id="message" onkeypress="userTyping();">
+        <button class="btn btn-primary" id="send"> <i class="fas fa-paper-plane"></i> </button>
       </div>
     </main>
 
@@ -117,6 +115,18 @@
       }
     }
   }
+  
+  var timeout;
+
+  function timeoutFunction(){
+    socket.emit("typing", { room: 'general', typing: false });
+  }
+
+  function userTyping(){
+    socket.emit('typing', { room: 'general', typing: true });
+    setTimeout(timeoutFunction, 2000);
+  }
+
   socket.on('connect', function () {
     console.log('Connected to server');
     var userid = document.getElementById('userid').value;
@@ -130,13 +140,11 @@
             let user = document.getElementById(key);
             user.classList.remove('offline-dot');
             user.classList.add('online-dot');
-            console.log(user)
           }
         } else {
           let user = document.getElementById(key);
           user.classList.remove('online-dot');
           user.classList.add('offline-dot');
-          console.log(user)
         }
       }
     });
@@ -197,6 +205,20 @@
         });
       }
     }
+
+    socket.on('typinguser', (data) => {
+      if(data.typing){
+        document.getElementById('type').innerHTML = `
+        <div id="wave">
+          <span class="user"> <strong> ${data.username} </strong> </span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>`;
+      }else{
+        document.getElementById('type').innerHTML = ``;
+      }
+    })
 
   });
 </script>

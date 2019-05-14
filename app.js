@@ -125,6 +125,20 @@ io.on('connection', (socket) => {
         })
       });
 
+      socket.on('typing', (data) => {
+        if(data.typing){
+          io.to(data.room).emit('typinguser', {
+            username: user.username,
+            typing: true
+          });
+        }else{
+          io.to(data.room).emit('typinguser', {
+            username: user.username,
+            typing: false
+          });
+        }
+      })
+
       socket.on('disconnect', () => {
         users[data.userid] = false;
         io.emit('publish', {
@@ -206,14 +220,25 @@ chatsNs.on('connection', (socket) => {
         });
       });
 
+      socket.on('typing', (data) => {
+        if(data.typing){
+          io.of('/chats').emit('typinguser', {
+            username: user.username,
+            typing: true
+          });
+        }else{
+          io.of('/chats').emit('typinguser', {
+            username: user.username,
+            typing: false
+          });
+        }
+      })
+
       socket.on('disconnect', () => {
         users[data.userid] = false;
         socket.emit('publish', {
           userStatus: users
         })
-        io.of('/chats').emit('leftmessage', {
-          message: user.username + ' left Chat.'
-        });
         console.log(chalk.red(user.username + ' disconnected!'));
       })
     })
