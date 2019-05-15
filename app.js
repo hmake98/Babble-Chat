@@ -38,7 +38,7 @@ var resetPass = require('./routes/reset');
 var accountRouter = require('./routes/account');
 var chatRouter = require('./routes/chats');
 
-mongoose.connect('mongodb://localhost:27017/babble', {
+mongoose.connect('mongodb://admin:admin1234@ds157276.mlab.com:57276/babblechat', {
   useNewUrlParser: true
 });
 
@@ -47,7 +47,7 @@ mongoose.Promise = global.Promise;
 app.use(expressSession({
   secret: 'Sh! Key',
   store: new MongoStore({
-    url: 'mongodb://localhost:27017/babble'
+    url: 'mongodb://admin:admin1234@ds157276.mlab.com:57276/babblechat'
   }),
   resave: false,
   saveUninitialized: false
@@ -264,6 +264,5 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-server.listen(3001);
 
 module.exports = app;

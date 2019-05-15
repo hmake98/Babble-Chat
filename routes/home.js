@@ -23,12 +23,9 @@ router.get('/:username', (req, res) => {
     res.redirect('/login');
   } else {
     Room.find({
-      users:[]
+      users: []
     }).then(room => {
-      Chat.find({
-        roomid: room[0]._id
-      }).then(chat => {
-        //var io = req.app.get('socketio');
+      if (room === null) {
         User.find({
           username: {
             $ne: req.params.username
@@ -40,12 +37,34 @@ router.get('/:username', (req, res) => {
             res.render('home', {
               users: users,
               user: user,
-              chats: chat,
               rooms: room
             });
           })
         });
-      })
+      } else {
+        console.log(room)
+        Chat.find({
+          roomid: room[0]._id
+        }).then(chat => {
+          //var io = req.app.get('socketio');
+          User.find({
+            username: {
+              $ne: req.params.username
+            }
+          }).then(users => {
+            User.findOne({
+              username: req.params.username
+            }).then(user => {
+              res.render('home', {
+                users: users,
+                user: user,
+                chats: chat,
+                rooms: room
+              });
+            })
+          });
+        })
+      }
     })
   }
 });
