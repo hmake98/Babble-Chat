@@ -11,10 +11,12 @@ var chalk = require('chalk');
 var User = require('./models/user');
 var Chat = require('./models/chat');
 var Room = require('./models/room');
-var http = require('http');
 var hbs = require('hbs');
 var app = express();
-var server = http.createServer(app);
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
+server.listen(4200);
 
 /**
  * Hbs helper for JSON data.
@@ -28,8 +30,6 @@ hbs.registerHelper('eq', function () {
   return args[0] == args[1]
 });
 
-var io = require('socket.io').listen(server);
-
 var indexRouter = require('./routes/index');
 var loginRouter = require('./routes/login');
 var homeRouter = require('./routes/home');
@@ -38,7 +38,7 @@ var resetPass = require('./routes/reset');
 var accountRouter = require('./routes/account');
 var chatRouter = require('./routes/chats');
 
-mongoose.connect('mongodb://admin:admin1234@ds157276.mlab.com:57276/babblechat', {
+mongoose.connect('mongodb://localhost:27017/babble', {
   useNewUrlParser: true
 });
 
@@ -47,7 +47,7 @@ mongoose.Promise = global.Promise;
 app.use(expressSession({
   secret: 'Sh! Key',
   store: new MongoStore({
-    url: 'mongodb://admin:admin1234@ds157276.mlab.com:57276/babblechat'
+    url: 'mongodb://localhost:27017/babble'
   }),
   resave: false,
   saveUninitialized: false
@@ -56,7 +56,6 @@ app.use(expressSession({
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-app.set('socketio', io);
 
 app.use(logger('dev'));
 app.use(express.json());

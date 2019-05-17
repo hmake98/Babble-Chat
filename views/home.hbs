@@ -123,6 +123,7 @@
   }
 
   function userTyping(){
+    console.log("hy")
     socket.emit('typing', { room: 'general', typing: true });
     setTimeout(timeoutFunction, 2000);
   }
