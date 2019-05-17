@@ -16,7 +16,7 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-server.listen(4200);
+server.listen(process.env.PORT || 4200);
 
 /**
  * Hbs helper for JSON data.
