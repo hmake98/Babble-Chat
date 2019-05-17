@@ -217,6 +217,10 @@ label {
   background: linear-gradient(250deg, #136a8a, #267871);
 }
 
+#mobileusr{
+  display: none;
+}
+
 .btn-danger {
   border-radius: 30px !important;
 }
@@ -482,8 +486,25 @@ div#wave {
 }
 
 @media screen and (max-width: 800px) {
+  main{
+    min-height: 100vh;
+  }
+
   .navbar{
     width: 100%;
+  }
+
+  #mobileusr{
+    display: block;
+    color: rgba(255,255,255,.5);
+  }
+
+  .btn-modal-close{
+    position: absolute;
+    z-index: 99999;
+    top:0;
+    right:0;
+    color: red !important;
   }
 
   .nav-link{
@@ -511,11 +532,7 @@ div#wave {
   }
 
   .message-bar input{
-    width: 80%;
+    width: 75%;
     display: inline-block;
-  }
-
-  #send{
-    
   }
 }

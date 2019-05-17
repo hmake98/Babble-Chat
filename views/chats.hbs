@@ -17,6 +17,38 @@
             <a class="btn btn-danger my-2 my-sm-0" href="/home/logout">Logout</a>
         </form>
     </div>
+    <button type="button" id="mobileusr" class="btn nav-link" data-toggle="modal" data-target="#exampleModalCenter">
+        <i class="fas fa-users"></i> Users
+    </button>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <nav class="col-md-12 bg-light sidebar">
+                        <div class="sidebar-sticky" id="style-1">
+                            <input class="form-control mr-sm-2" id="search" type="search" placeholder="Search"
+                                aria-label="Search" onsearch="searchUser()">
+                            <input type="input" id="userid" value="{{user._id}}" hidden>
+                            <input type="input" id="username" value="{{user.username}}" hidden>
+                            <ul class="nav flex-column" id="userslist">
+                                {{#users}}
+                                <li class="nav-item users {{this._id}}" data-id="{{this._id}}">
+                                    <img src="http://sg-fs.com/wp-content/uploads/2017/08/user-placeholder.png"
+                                        alt="Avatar" class="avatar">
+                                    <span class="offline-dot" id="{{this._id}}"></span>
+                                    {{this.username}}
+                                </li>
+                                {{/users}}
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+                <button class="btn btn-modal-close" data-dismiss="modal"> <i class="fas fa-times-circle fa-2x"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 </nav>
 
 <div class="container-fluid">
@@ -43,7 +75,7 @@
                 </ul>
             </div>
         </nav>
-
+        <div class="top-active-chat bg-success text-white w-100 text-center"> <h5> {{chatuser}} </h5> </div>
         <main role="main" class="col-md-10 ml-sm-auto col-lg-10 px-4">
             <div class="chat">
                 <div class="container-fluid">
