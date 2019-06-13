@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var MongoStore = require('connect-mongo')(expressSession);
 var flash = require('req-flash');
 var chalk = require('chalk');
+var moment = require('moment');
 var User = require('./models/user');
 var Chat = require('./models/chat');
 var Room = require('./models/room');
@@ -30,6 +31,16 @@ hbs.registerHelper('eq', function () {
   return args[0] == args[1]
 });
 
+hbs.registerHelper('datemode', function(date) {
+  if(moment(date).startOf('hour').fromNow().includes('month ago') || moment(date).startOf('hour').fromNow().includes('days ago')){
+    return moment(date).format('MMMM Do YYYY, h:mm a');
+  } else if(moment(date).startOf('hour').fromNow().includes('a day ago')){
+    return 'Yesterday | '+moment(date).format('h:mm a');
+  } else {
+    return moment(date).format('h:mm a');
+  }
+})
+
 var indexRouter = require('./routes/index');
 var loginRouter = require('./routes/login');
 var homeRouter = require('./routes/home');
@@ -38,7 +49,7 @@ var resetPass = require('./routes/reset');
 var accountRouter = require('./routes/account');
 var chatRouter = require('./routes/chats');
 
-mongoose.connect('mongodb://admin:admin1234@ds157276.mlab.com:57276/babblechat', {
+mongoose.connect('mongodb://localhost:27017/forgotpass', {
   useNewUrlParser: true
 });
 
@@ -47,7 +58,7 @@ mongoose.Promise = global.Promise;
 app.use(expressSession({
   secret: 'Sh! Key',
   store: new MongoStore({
-    url: 'mongodb://admin:admin1234@ds157276.mlab.com:57276/babblechat'
+    url: 'mongodb://localhost:27017/forgotpass'
   }),
   resave: false,
   saveUninitialized: false
@@ -165,7 +176,6 @@ chatsNs.on('connection', (socket) => {
       });
 
       socket.on('joinprivateroom', (data) => {
-        console.log(data)
         Room.findOne({
           users: {
             $all: [data.chatWith, user.id]
@@ -180,7 +190,7 @@ chatsNs.on('connection', (socket) => {
               }
             }, {
               upsert: true
-            }).then(resp => console.log(resp));
+            }).then();
 
             Room.findOne({users: [data.chatWith, user.id]}).then(newroom => {
               console.log(newroom)

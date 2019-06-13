@@ -27,16 +27,16 @@
         <div class="modal-body">
           <nav class="col-md-12 bg-light sidebar">
             <div class="sidebar-sticky" id="style-1">
-              <input class="form-control mr-sm-2" id="search" type="search" placeholder="Search" aria-label="Search"
-                onsearch="searchUser()">
+              <input class="form-control mr-sm-2" id="searchMob" type="search" placeholder="Search" aria-label="Search"
+                onsearch="searchUserMob()">
               <input type="input" id="userid" value="{{user._id}}" hidden>
               <input type="input" id="username" value="{{user.username}}" hidden>
-              <ul class="nav flex-column" id="userslist">
+              <ul class="nav flex-column" id="userslistMob">
                 {{#users}}
-                <li class="nav-item users {{this._id}}" data-id="{{this._id}}">
+                <li class="nav-item users {{this._id}}Mob" data-id="{{this._id}}">
                   <img src="http://sg-fs.com/wp-content/uploads/2017/08/user-placeholder.png" alt="Avatar"
                     class="avatar">
-                  <span class="offline-dot" id="{{this._id}}"></span>
+                  <span class="offline-dot" id="{{this._id}}Mob"></span>
                   {{this.username}}
                 </li>
                 {{/users}}
@@ -54,15 +54,15 @@
   <div class="row">
     <nav class="col-md-2 d-none d-md-block bg-light sidebar">
       <div class="sidebar-sticky" id="style-1">
-        <input class="form-control mr-sm-2" id="search" type="search" placeholder="Search" aria-label="Search"
-          onsearch="searchUser()">
+        <input class="form-control mr-sm-2" id="searchDesk" type="search" placeholder="Search" aria-label="Search"
+          onsearch="searchUserDesk()">
         <input type="input" id="userid" value="{{user._id}}" hidden>
         <input type="input" id="username" value="{{user.username}}" hidden>
-        <ul class="nav flex-column" id="userslist">
+        <ul class="nav flex-column" id="userslistDesk">
           {{#users}}
           <li class="nav-item users {{this._id}}" data-id="{{this._id}}">
             <img src="http://sg-fs.com/wp-content/uploads/2017/08/user-placeholder.png" alt="Avatar" class="avatar">
-            <span class="offline-dot" id="{{this._id}}"></span>
+            <span class="offline-dot" id="{{this._id}}Desk"></span>
             {{this.username}}
           </li>
           {{/users}}
@@ -82,7 +82,7 @@
                 <div class="outgoing_msg">
                   <div class="sent_msg">
                     <p>{{this.message}}</p>
-                    <span class="time_date"> {{this.created}} </span>
+                    <span class="time_date"> {{datemode this.createdAt}} </span>
                   </div>
                 </div>
                 {{else}}
@@ -91,7 +91,7 @@
                     <div class="received_withd_msg">
                       <strong> {{this.username}} </strong>
                       <p>{{this.message}}</p>
-                      <span class="time_date"> {{this.created}} </span>
+                      <span class="time_date"> {{datemode this.createdAt}} </span>
                     </div>
                   </div>
                 </div>
@@ -123,13 +123,12 @@
 <script>
   var socket = io();
   var users = {{{json users}}};
-
-  function searchUser() {
-    let search = document.getElementById('search').value;
-    document.getElementById('userslist').innerHTML = "";
+  function searchUserDesk() {
+    let searchDesk = document.getElementById('searchDesk').value;
+    document.getElementById('userslistDesk').innerHTML = "";
     for (let user of users) {
-      if (user.username.toLowerCase().includes(search.toLowerCase())) {
-        document.getElementById('userslist').innerHTML += `
+      if (user.username.toLowerCase().includes(searchDesk.toLowerCase())) {
+        document.getElementById('userslistDesk').innerHTML += `
           <li class="nav-item users">
             <img src="http://sg-fs.com/wp-content/uploads/2017/08/user-placeholder.png" alt="Avatar"
               class="avatar">
@@ -137,24 +136,42 @@
             ${user.username}
           </li>
         `;
-      } else if (!user.username.toLowerCase().includes(search.toLowerCase())) {
-
+      } else if (!user.username.toLowerCase().includes(searchDesk.toLowerCase())) {
       } else {
-        document.getElementById('userslist').innerHTML =
+        document.getElementById('userslistDesk').innerHTML =
+          `<div class="card mt-3 p-3"> <strong> No user found! </strong> </div>`;
+      }
+    }
+  }
+
+  function searchUserMob() {
+    let searchMob = document.getElementById('searchMob').value;
+    document.getElementById('userslistMob').innerHTML = "";
+    for (let user of users) {
+      if (user.username.toLowerCase().includes(searchMob.toLowerCase())) {
+        document.getElementById('userslistMob').innerHTML += `
+          <li class="nav-item users">
+            <img src="http://sg-fs.com/wp-content/uploads/2017/08/user-placeholder.png" alt="Avatar"
+              class="avatar">
+            <span class="offline-dot" id="${user._id}"></span>
+            ${user.username}
+          </li>
+        `;
+      } else if (!user.username.toLowerCase().includes(searchMob.toLowerCase())) {
+      } else {
+        document.getElementById('userslistMob').innerHTML =
           `<div class="card mt-3 p-3"> <strong> No user found! </strong> </div>`;
       }
     }
   }
 
   var timeout;
-
   function timeoutFunction() {
     socket.emit("typing", {
       room: 'general',
       typing: false
     });
   }
-
   function userTyping() {
     console.log("hy")
     socket.emit('typing', {
@@ -163,7 +180,6 @@
     });
     setTimeout(timeoutFunction, 2000);
   }
-
   socket.on('connect', function () {
     console.log('Connected to server');
     var userid = document.getElementById('userid').value;
@@ -174,14 +190,20 @@
       for (let key in data.usersStatus) {
         if (data.usersStatus[key]) {
           if (key !== userid) {
-            let user = document.getElementById(key);
-            user.classList.remove('offline-dot');
-            user.classList.add('online-dot');
+            let userDesk = document.getElementById(key+'Desk');
+            userDesk.classList.remove('offline-dot');
+            userDesk.classList.add('online-dot');
+            let userMob = document.getElementById(key+'Mob');
+            userMob.classList.remove('offline-dot');
+            userMob.classList.add('online-dot');
           }
         } else {
-          let user = document.getElementById(key);
-          user.classList.remove('online-dot');
-          user.classList.add('offline-dot');
+          let userDesk = document.getElementById(key+'Desk');
+          userDesk.classList.remove('online-dot');
+          userDesk.classList.add('offline-dot');
+          let userMob = document.getElementById(key+'Mob');
+          userMob.classList.remove('online-dot');
+          userMob.classList.add('offline-dot');
         }
       }
     });
@@ -200,7 +222,6 @@
         document.getElementById('message').value = '';
       }
     })
-
     socket.on('message', (data) => {
       if (data.userid == userid) {
         document.getElementById('output').innerHTML += `
@@ -225,7 +246,6 @@
       `;
       }
     });
-
     socket.on('leftuser', (data) => {
       document.getElementById('output').innerHTML += `
       <div class="alert alert-danger" role="alert">
@@ -233,16 +253,20 @@
       </div>
       `;
     });
-
     for (let user of users) {
-      let tempEle = document.getElementsByClassName(user._id);
-      for (let temp of tempEle) {
+      let tempEleDesk = document.getElementsByClassName(user._id+'Desk');
+      for (let temp of tempEleDesk) {
+        temp.addEventListener('click', () => {
+          window.location.href = `/chats/${temp.getAttribute('data-id')}`;
+        });
+      }
+      let tempEleMob = document.getElementsByClassName(user._id+'Mob');
+      for (let temp of tempEleMob) {
         temp.addEventListener('click', () => {
           window.location.href = `/chats/${temp.getAttribute('data-id')}`;
         });
       }
     }
-
     socket.on('typinguser', (data) => {
       if (data.typing) {
         document.getElementById('type').innerHTML = `
@@ -256,6 +280,5 @@
         document.getElementById('type').innerHTML = ``;
       }
     })
-
   });
 </script>

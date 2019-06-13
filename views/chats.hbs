@@ -58,8 +58,8 @@
                 <div class="nav-item users text-center bg-success text-white">
                     {{chatuser}}
                 </div>
-                <input class="form-control mr-sm-2" id="search" type="search" placeholder="Search" aria-label="Search"
-                    onsearch="searchUser()">
+                <!-- <input class="form-control mr-sm-2" id="search" type="search" placeholder="Search" aria-label="Search"
+                    onsearch="searchUser()"> -->
                 <input type="input" id="userid" value="{{user._id}}" hidden>
                 <input type="input" id="chatterid" value="{{chatter}}" hidden>
                 <input type="input" id="username" value="{{user.username}}" hidden>
@@ -89,7 +89,7 @@
                                 <div class="outgoing_msg">
                                     <div class="sent_msg">
                                         <p>{{this.message}}</p>
-                                        <span class="time_date"> {{this.created}} </span>
+                                        <span class="time_date"> {{datemode this.createdAt}} </span>
                                     </div>
                                 </div>
                                 {{else}}
@@ -98,7 +98,7 @@
                                         <div class="received_withd_msg">
                                             <strong> {{this.username}} </strong>
                                             <p>{{this.message}}</p>
-                                            <span class="time_date"> {{this.created}} </span>
+                                            <span class="time_date"> {{datemode this.createdAt}} </span>
                                         </div>
                                     </div>
                                 </div>
@@ -112,6 +112,7 @@
                     </div>
 
                 </div>
+                <div id="type"></div>
             </div>
             <div class="message-bar">
                 <input class="form-control message-button" placeholder="Enter message" id="message"
@@ -134,6 +135,7 @@
         let search = document.getElementById('search').value;
         document.getElementById('userslist').innerHTML = "";
         for (let user of users) {
+            console.log(users)
             if (user.username.toLowerCase().includes(search.toLowerCase())) {
                 document.getElementById('userslist').innerHTML += `
                 <li class="nav-item users">

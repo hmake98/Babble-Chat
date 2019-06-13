@@ -359,7 +359,7 @@ strong {
 }
 
 .received_withd_msg {
-  max-width: 65%;
+  max-width: 47%;
   width: auto;
   float: left;
   overflow: auto;
@@ -485,7 +485,15 @@ div#wave {
   }
 }
 
+.top-active-chat{
+  display: none;
+}
+
 @media screen and (max-width: 800px) {
+  .top-active-chat{
+    display: block;
+  }
+
   main{
     min-height: 100vh;
   }

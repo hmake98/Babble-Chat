@@ -19,6 +19,8 @@
     "hbs": "~4.0.1",
     "http": "0.0.0",
     "http-errors": "~1.6.2",
+    "moment": "^2.24.0",
+    "momentjs": "^2.0.0",
     "mongoose": "^5.4.20",
     "morgan": "~1.9.0",
     "nodemailer": "^6.0.0",
