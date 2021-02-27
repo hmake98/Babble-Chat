@@ -19,7 +19,7 @@
     "express-session": "1.15.6",
     "hbs": "4.0.3",
     "http": "0.0.0",
-    "http-errors": "1.6.3",
+    "http-errors": "1.8.0",
     "moment": "2.24.0",
     "momentjs": "2.0.0",
     "mongoose": "5.7.5",
