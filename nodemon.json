@@ -1,0 +1,8 @@
+{
+    "watch": [
+        "*"
+    ],
+    "ext": ".ts,.js",
+    "ignore": [],
+    "exec": "node app.js"
+}

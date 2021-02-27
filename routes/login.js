@@ -4,7 +4,7 @@ var User = require('../models/user');
 var bcrypt = require('bcrypt');
 
 /* GET home page. */
-router.get('/', function (req, res, next) {    
+router.get('/', function (req, res, next) {
     if (req.session.user) {
         res.redirect('/home/' + req.session.user[0].username);
     } else {
@@ -13,42 +13,42 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/submit', (req, res) => {
-    if (req.body.username && req.body.password) {
+    const { username, password } = req.body
+    if (username && password) {
         User.find({
-            username: req.body.username
-        }).then(user => {
-            if (user.length == 0) {
-                req.flash('error', 'error');
+            username
+        }).then(users => {
+            if (users.length == 0) {
+                // req.flash('error', 'error');
                 res.render('login', {
-                    message: "No account found!"
+                    message: "No user found!"
                 });
             } else {
-                user.forEach(element => {
-                    bcrypt.compare(req.body.password, element.password, (err, isMatch) => {
-                        if (err) {
-                            console.log(err);
-                            res.json({
-                                success: false,
-                                message: "Something went wrong!",
-                                error: err
-                            });
+                // console.log(users)
+                const exist_user = users[0];
+                bcrypt.compare(password, exist_user.password, (err, isMatch) => {
+                    if (err) {
+                        res.json({
+                            success: false,
+                            message: "Something went wrong!",
+                            error: err
+                        });
+                    } else {
+                        if (isMatch) {
+                            req.session.user = exist_user;
+                            res.redirect('/home/' + exist_user.username);
                         } else {
-                            if (isMatch) {
-                                req.session.user = user;
-                                res.redirect('/home/' + req.session.user[0].username);
-                            } else {
-                                res.render('login', {
-                                    message: "Password is invalid!"
-                                });
-                            }
+                            res.render('login', {
+                                message: "Password is invalid!"
+                            });
                         }
-                    })
+                    }
                 })
             }
         }).catch(err => {
             res.status(500).json({
                 success: false,
-                message: "Invalid user",
+                message: "Invalid user!",
                 error: err
             });
         });

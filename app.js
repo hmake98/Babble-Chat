@@ -1,23 +1,31 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var expressSession = require('express-session');
-var mongoose = require('mongoose');
-var MongoStore = require('connect-mongo')(expressSession);
-var flash = require('req-flash');
-var chalk = require('chalk');
-var moment = require('moment');
-var User = require('./models/user');
-var Chat = require('./models/chat');
-var Room = require('./models/room');
-var hbs = require('hbs');
-var app = express();
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
+require('dotenv').config({ path: './.env' });
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const expressSession = require('express-session');
+const mongoose = require('mongoose');
+const MongoStore = require('connect-mongo')(expressSession);
+const flash = require('req-flash');
+const chalk = require('chalk');
+const moment = require('moment');
+const User = require('./models/user');
+const Chat = require('./models/chat');
+const Room = require('./models/room');
+const hbs = require('hbs');
+const app = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+const db_url = process.env.MONGO_URL
 
-server.listen(process.env.PORT || 4200);
+const indexRouter = require('./routes/index');
+const loginRouter = require('./routes/login');
+const homeRouter = require('./routes/home');
+const forgotPass = require('./routes/forgot');
+const resetPass = require('./routes/reset');
+const accountRouter = require('./routes/account');
+const chatRouter = require('./routes/chats');
 
 /**
  * Hbs helper for JSON data.
@@ -31,26 +39,29 @@ hbs.registerHelper('eq', function () {
   return args[0] == args[1]
 });
 
-hbs.registerHelper('datemode', function(date) {
-  if(moment(date).startOf('hour').fromNow().includes('month ago') || moment(date).startOf('hour').fromNow().includes('days ago')){
+hbs.registerHelper('datemode', function (date) {
+  if (moment(date).startOf('hour').fromNow().includes('month ago')
+    || moment(date).startOf('hour').fromNow().includes('days ago')
+  ) {
     return moment(date).format('MMMM Do YYYY, h:mm a');
-  } else if(moment(date).startOf('hour').fromNow().includes('a day ago')){
-    return 'Yesterday | '+moment(date).format('h:mm a');
+  } else if (moment(date).startOf('hour').fromNow().includes('a day ago')) {
+    return 'Yesterday | ' + moment(date).format('h:mm a');
   } else {
     return moment(date).format('h:mm a');
   }
 })
 
-var indexRouter = require('./routes/index');
-var loginRouter = require('./routes/login');
-var homeRouter = require('./routes/home');
-var forgotPass = require('./routes/forgot');
-var resetPass = require('./routes/reset');
-var accountRouter = require('./routes/account');
-var chatRouter = require('./routes/chats');
-
-mongoose.connect('mongodb://admin:admin1234@ds157276.mlab.com:57276/babblechat', {
-  useNewUrlParser: true
+/**
+ * Mongoose connection to Mongodb database
+ */
+mongoose.connect(db_url, {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useUnifiedTopology: true
+}).then(() => {
+  console.log('Database connected!')
+}).catch((err) => {
+  console.log(err)
 });
 
 mongoose.Promise = global.Promise;
@@ -58,7 +69,7 @@ mongoose.Promise = global.Promise;
 app.use(expressSession({
   secret: 'Sh! Key',
   store: new MongoStore({
-    url: 'mongodb://admin:admin1234@ds157276.mlab.com:57276/babblechat'
+    url: `${process.env.MONGO_URL}`
   }),
   resave: false,
   saveUninitialized: false
@@ -70,13 +81,14 @@ app.set('view engine', 'hbs');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({
-  extended: false
-}));
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(flash());
 
+/**
+ * Routers
+ */
 app.use('/', indexRouter);
 app.use('/login', loginRouter);
 app.use('/home', homeRouter);
@@ -100,16 +112,16 @@ function formatAMPM(date) {
 }
 
 io.on('connection', (socket) => {
-  socket.on('login', (data) => {
+
+  socket.on('login', ({ userid }) => {
     User.findOne({
-      _id: data.userid
+      _id: userid
     }).then(user => {
       console.log(chalk.green(user.username + ' connected!'));
-      users[data.userid] = true;
 
-      io.emit('publish', {
-        usersStatus: users
-      });
+      users[userid] = true;
+
+      io.emit('publish', { usersStatus: users });
 
       socket.on('joinroom', (data) => {
         socket.join(data.room);
@@ -117,11 +129,13 @@ io.on('connection', (socket) => {
       });
 
       socket.on('chat', (data) => {
+
         io.to(data.room).emit('message', {
           username: user.username,
           ...data,
           time: formatAMPM(new Date)
         });
+
         Room.findOne({
           users: []
         }).then(room => {
@@ -136,12 +150,12 @@ io.on('connection', (socket) => {
       });
 
       socket.on('typing', (data) => {
-        if(data.typing){
+        if (data.typing) {
           io.to(data.room).emit('typinguser', {
             username: user.username,
             typing: true
           });
-        }else{
+        } else {
           io.to(data.room).emit('typinguser', {
             username: user.username,
             typing: false
@@ -150,7 +164,7 @@ io.on('connection', (socket) => {
       })
 
       socket.on('disconnect', () => {
-        users[data.userid] = false;
+        users[userid] = false;
         io.emit('publish', {
           usersStatus: users
         })
@@ -192,7 +206,7 @@ chatsNs.on('connection', (socket) => {
               upsert: true
             }).then();
 
-            Room.findOne({users: [data.chatWith, user.id]}).then(newroom => {
+            Room.findOne({ users: [data.chatWith, user.id] }).then(newroom => {
               console.log(newroom)
               console.log(chalk.red("New room created!"));
               socket.join(newroom._id);
@@ -230,12 +244,12 @@ chatsNs.on('connection', (socket) => {
       });
 
       socket.on('typing', (data) => {
-        if(data.typing){
+        if (data.typing) {
           io.of('/chats').emit('typinguser', {
             username: user.username,
             typing: true
           });
-        }else{
+        } else {
           io.of('/chats').emit('typinguser', {
             username: user.username,
             typing: false
@@ -271,6 +285,10 @@ app.use(function (err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+server.listen(process.env.PORT || 3000, () => {
+  console.log('Server is up and running on Port :', process.env.PORT || 3000)
 });
 
 
