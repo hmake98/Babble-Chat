@@ -25,6 +25,6 @@
     "morgan": "~1.9.0",
     "nodemailer": "^6.0.0",
     "req-flash": "0.0.3",
-    "socket.io": "^2.2.0"
+    "socket.io": "^2.4.0"
   }
 }
