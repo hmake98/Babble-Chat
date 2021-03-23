@@ -10,7 +10,7 @@
     "async-waterfall": "0.1.5",
     "bcrypt": "5.0.0",
     "chalk": "2.4.2",
-    "connect-mongo": "2.0.3",
+    "connect-mongo": "4.4.1",
     "cookie-parser": "1.4.4",
     "crypto": "1.0.1",
     "debug": "2.6.9",
